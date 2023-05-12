@@ -7,7 +7,7 @@ import re
 
 filename = "SDL_gamecontrollerdb.h"
 input = open(filename)
-output = open(filename + ".new", "w")
+output = open(f"{filename}.new", "w")
 parsing_controllers = False
 controllers = []
 controller_guids = {}
@@ -30,9 +30,11 @@ def write_controllers():
     for entry in sorted(controllers, key=lambda entry: entry[2]):
         line = "".join(entry) + "\n"
         if not line.endswith(",\n") and not line.endswith("*/\n"):
-            print("Warning: '%s' is missing a comma at the end of the line" % (line))
+            print(f"Warning: '{line}' is missing a comma at the end of the line")
         if (entry[1] in controller_guids):
-            print("Warning: entry '%s' is duplicate of entry '%s'" % (entry[2], controller_guids[entry[1]][2]))
+            print(
+                f"Warning: entry '{entry[2]}' is duplicate of entry '{controller_guids[entry[1]][2]}'"
+            )
         controller_guids[entry[1]] = entry
 
         output.write(line)
@@ -40,7 +42,7 @@ def write_controllers():
     controller_guids = {}
 
 for line in input:
-    if (parsing_controllers):
+    if parsing_controllers:
         if (line.startswith("{")):
             output.write(line)
         elif (line.startswith("    NULL")):
@@ -48,7 +50,7 @@ for line in input:
             write_controllers()
             output.write(line)
         elif (line.startswith("#if")):
-            print("Parsing " + line.strip())
+            print(f"Parsing {line.strip()}")
             output.write(line)
         elif (line.startswith("#endif")):
             write_controllers()
@@ -62,4 +64,4 @@ for line in input:
         output.write(line)
 
 output.close()
-print("Finished writing %s.new" % filename)
+print(f"Finished writing {filename}.new")
